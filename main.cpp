@@ -90,7 +90,7 @@ int main(int argc, const char * argv[]) {
 	//Now we can start to check out what queries the user has
 	while (num_queries < queries) {
 		cin >> start >> end;
-		if (graph[start][end] == NULL && graph[start][end] != 0) {
+		if (graph[start][end] == NULL) {
 			cout << "NO PATH" << endl;
 		}
 		else {

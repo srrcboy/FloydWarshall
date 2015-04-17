@@ -40,7 +40,6 @@ int main(int argc, const char * argv[]) {
         ss << x << "-" << y;
 		graph[x][y] = cost;
         path[x][y] = ss.str();
-		count++;
 	}
 	for (int k = 0; k < 7; k++){
 		for (int i = 0; i < 7; i++){

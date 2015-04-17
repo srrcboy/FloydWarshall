@@ -13,7 +13,7 @@
 using namespace std;
 
 //int nodes, edges, queries, x, y, cost;
-//vector<vector<int>> graph(nodes+1, vector<int>(nodes+1));
+//vector< vector<int> > graph(nodes+1, vector<int>(nodes+1));
 
 /*void print(){
 	//Print out the graph to make sure it is entered correctly
@@ -30,8 +30,8 @@ int main(int argc, const char * argv[]) {
 	//cout << "How many nodes would you like to create?" << endl;
 	cin >> nodes >> edges >> queries;
 	nodes++;
-	vector<vector<int>> graph(nodes + 1, vector<int>(nodes + 1));
-    vector<vector<string>> path(nodes + 1, vector<string>(nodes + 1));
+	vector< vector<int> > graph(nodes + 1, vector<int>(nodes + 1));
+    vector< vector<string> > path(nodes + 1, vector<string>(nodes + 1));
 	//cout << "How many edges would you like to create?" << endl;
 	//cin >> edges;
 	//cout << "How many queries would you like to create?" << endl;
@@ -45,13 +45,6 @@ int main(int argc, const char * argv[]) {
 		graph[x][y] = cost;
         path[x][y] = ss.str();
 		count++;
-	}
-	for (int i = 1; i < nodes; i++)	{
-		for (int j = 1; j < nodes; j++) {
-			if (graph[i][j] == 0 && i != j) {
-				graph[i][j] = NULL;
-			}
-		}
 	}
 	cout << "\n\n\nThe array after being initialized is:\n";
 							 

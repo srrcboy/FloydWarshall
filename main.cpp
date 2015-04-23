@@ -31,56 +31,98 @@ void printPath(vector<vector<string> >& path, int nodes){
 int main(int argc, const char * argv[]) {
 	int nodes, edges, queries, x, y, cost, start, end;
 	cin >> nodes >> edges >> queries;
-	nodes++;
-	vector< vector<int> > graph(nodes + 1, vector<int>(nodes + 1));
-    vector< vector<string> > path(nodes + 1, vector<string>(nodes + 1));
-    for (int count = 0; count < edges; count++) {
-        stringstream ss;
-		cin >> x >> y >> cost;
-        ss << x << "-" << y;
-		graph[x][y] = cost;
-        path[x][y] = ss.str();
-	}
-	for (int k = 0; k < 7; k++){
-		for (int i = 0; i < 7; i++){
-			for (int j = 0; j < 7; j++){
-				if ((graph[i][k] * graph[k][j] != 0) && (i != j)){
-					if ((graph[i][k] + graph[k][j] < graph[i][j]) || (graph[i][j] == 0)){
-						graph[i][j] = graph[i][k] + graph[k][j];
-                        stringstream intToStr;
-                        if(!path[i+1][j].empty() && (path[i][k].length() == 3)) {
-                            intToStr << i << "-" << path[i+1][j];
-                        }
-                        else if(!path[i][k].empty())  {
-                            intToStr << path[i][k]<< "-" << j;
-                        }
-                        else {
-                            intToStr << i << "-" << k << "-" << j;
-                        }
-                        path[i][j] = intToStr.str();
-						//cout << "The value at graph[" << i << "][" << j << "] is: "<< graph[i][j] << endl;
-                        //cout << "The value at path[" << i << "][" << j << "] is: "<< path[i][j] << endl;
-					}
-				}
-			}
-		}
-	}
-	for (int i = 1; i < nodes; i++) {
-        stringstream ss;
-        ss << i << "-" << i;
-		graph[i][i] = 0;
-        path[i][i] = ss.str();
-	}
-    for (int num_queries = 0; num_queries < queries; num_queries++) {
-		cin >> start >> end;
-		if (path[start][end].empty()) {
-			cout << "NO PATH" << endl;
-		}
-		else {
-			cout << "cost = " << graph[start][end] << endl << path[start][end] << endl;
-		}
-	}
-    //printCost(graph, nodes);
-    //printPath(path, nodes);
-    return 0;
+    //Create two 2D arrays.
+    //graph stores the cost of getting from one node to another.
+    //nextNode is used for path reconstruction, and holds what the next node in the path is.
+    int graph[nodes][nodes];
+    int nextNode[nodes][nodes];
+    
+    //Initializes both arrays to be filled with an arbitrarily large number.
+    //This lets the program know when there isn't a path.
+    //Please note that, since we are expected to have the numbering of the nodes
+    //start at 1 rather than 0, all of my inputs into the arrays will
+    //be the given number minus 1.
+    for (int i = 1; i <= nodes; i++){
+        for (int j = 1; j <= nodes; j++){
+            D[i-1][j-1] = 999999999;
+            nextNode[i-1][j-1] = 999999999;
+        }
+    }
+    
+    //Sets the cost of going from a node to itself as being 0.
+    for (int i = 1; i <= nodes; i++){
+        D[i-1][i-1] = 0;
+    }
+    
+    //Takes in the edges and the cost of going from one node to another.
+    for (int i = 1; i <= edges; i++){
+        //Takes in the node the edge is coming from, the node it is going to,
+        //and the cost of the edge.
+        int n1;
+        int n2;
+        int cost;
+        cin >> n1;
+        cin >> n2;
+        cin >> cost;
+        
+        //Sets the appropriate costs in the D array.
+        D[n1-1][n2-1] = cost;
+        //Sets the path going from n1 to n2 in the nextNode array.
+        nextNode[n1-1][n2-1] = n2;
+    }
+    
+    //The Floyd-Warshall algorithm.
+    for (int k = 1; k <= nodes; k++){
+        for (int i = 1; i <= nodes; i++){
+            for (int j = 1; j <= nodes; j++){
+                //If the path using two edges is less than the path using one edge...
+                if (D[i-1][j-1] > (D[i-1][k-1] + D[k-1][j-1])){
+                    //Set the cost of the edge to be the lesser cost.
+                    D[i-1][j-1] = (D[i-1][k-1] + D[k-1][j-1]);
+                    //Have the nextNode array go to the other node
+                    //before going to the final node. This ensures proper path reconstruction.
+                    nextNode[i-1][j-1] = nextNode[i-1][k-1];
+                }
+            }
+        }
+    }
+    
+    //Go through all of the queries.
+    for (int i = 1; i <= queries; i++){
+        int n1;
+        int n2;
+        cin >> n1;
+        cin >> n2;
+        
+        //The cost of going from a node to itself is 0.
+        if (n1 == n2){
+            cout << "cost = 0" << endl << n1 << "-" << n2 << endl;
+        }
+        //If the path or cost is a very large number, then there is no path.
+        else if (nextNode[n1-1][n2-1] > 9999999 || D[n1-1][n2-1] > 9999999){
+            cout << "NO PATH" << endl;
+        }
+        //Else if there is a path...
+        else{
+            //Print out the cost.
+            cout << "cost = " << D[n1-1][n2-1] << endl;
+            //Print out the first node and a dash.
+            cout << n1 << "-";
+            
+            //Go through the nextNode array, changing the value of n1 until
+            //you get to n2 by following the path.
+            while (n1 != n2){
+                //Set n1 equal to the next node in the path.
+                n1 = nextNode[n1-1][n2-1];
+                //If the final node has been reached, print it out with a new line.
+                if (n1 == n2){
+                    cout << n1 << endl;
+                }
+                //If the final node hasn't been reached, print out the node and a dash.
+                else{
+                    cout << n1 << "-";
+                }
+            }
+        }
+    }
 }
